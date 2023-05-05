@@ -11,8 +11,11 @@
         <link rel="stylesheet" href="css/leaflet-measure.css">
         <style>
         #map {
-            width: 1726px;
-            height: 1000px;
+position: absolute;
+            width: 100%;
+top:0;
+bottom:0;
+            
         }
         </style>
         <title></title>
@@ -77,7 +80,7 @@
             maxNativeZoom: 19
         });
         layer_GoogleSatelliteHybrid_0;
-        map.addLayer(layer_GoogleSatelliteHybrid_0);
+       //map.addLayer(layer_GoogleSatelliteHybrid_0);
         map.createPane('pane_OpenStreetMap_1');
         map.getPane('pane_OpenStreetMap_1').style.zIndex = 401;
         var layer_OpenStreetMap_1 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -103,7 +106,7 @@
             maxNativeZoom: 17
         });
         layer_OpenTopoMap_2;
-        map.addLayer(layer_OpenTopoMap_2);
+      //  map.addLayer(layer_OpenTopoMap_2);
         function pop_Area3outline_3(feature, layer) {
         }
 
