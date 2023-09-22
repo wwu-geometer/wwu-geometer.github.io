@@ -4,8 +4,25 @@ var map = L.map('map', {
     attributionControl: false,
     fullscreenControl: true,
     fullscreenControlOptions: {
-        position: 'topleft'
-    }
+        position: 'topleft',
+    },
+    // contextmenu: true,
+    // contextmenuWidth: 140,
+    // contextmenuItems: [{
+    //     text: 'Show coordinates',
+    //     callback: showCoordinates
+    // }, {
+    //     text: 'Center map here',
+    //     callback: centerMap
+    // }, '-', {
+    //     text: 'Zoom in',
+    //     icon: 'images/zoom-in.png',
+    //     callback: zoomIn
+    // }, {
+    //     text: 'Zoom out',
+    //     icon: 'images/zoom-out.png',
+    //     callback: zoomOut
+    // }]
 });
 
 var hash = new L.Hash(map);
@@ -20,6 +37,7 @@ var notification = L.control
     })
     .addTo(map);
 
+L.Control.geocoder({ position: "topleft", showResultIcons: true }).addTo(map);
 
 // notification.success('Success', 'Data loaded');
 
@@ -28,15 +46,37 @@ L.Control.betterFileLayer({
 }).addTo(map);
 
 
+// function showCoordinates(e) {
+//     var popup = L.popup()
+//         .setLatLng(latlng)
+//         .setContent('<p>Hello world!<br />This is a nice popup.</p>')
+//         .openOn(map);
+//     // alert(e.latlng);
+// }
+
+// function centerMap(e) {
+//     map.panTo(e.latlng);
+// }
+
+// function zoomIn(e) {
+//     map.zoomIn();
+// }
+
+// function zoomOut(e) {
+//     map.zoomOut();
+// }
+
+L.control.scale(
+    {
+        imperial: false,
+    }).addTo(map);
+
 
 map.on("bfl:layerloaded", function () { notification.success('Success', 'Data loaded successfully'); })
 map.on("bfl:layerloaderror", function () { notification.alert('Error', 'Unable to load file'); })
 map.on("bfl:filenotsupported", function () { notification.alert('Error', 'File type not supported'); })
 map.on("bfl:layerisempty", function () { notification.warning('Error', 'No features in file'); })
 map.on("bfl:filesizelimit", function () { notification.alert('Error', 'Maximun file size allowed is 10 MB'); })
-
-
-
 
 
 
@@ -105,11 +145,21 @@ var overLayers = [
     },
     {
         group: 'Geology',
-        collapsed: true,
+        collapsed: false,
         layers: [{
-            name: "Geology",
+            name: '<details><summary><div id="Geology"></div>Geology</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button" ,  onclick=ZoomToLayer("Geology")> <img src="./src/assets/magnifying-glass-location-solid.svg", title ="zoom to layer" /img></button> </details>  ',
             short_name: "Geology",
-            layer: L.tileLayer.wms('https://services.bgr.de/wms/geologie/guek200/?REQUEST=GetCapabilities&VERSION=1.3.0&SERVICE=WMS')
+            active: true,
+            layer: {
+                type: "tileLayer.wms",
+                args: ["https://services.bgr.de/wms/geologie/guek200/?", {
+                    layers: 1,
+                    format: 'image/png',
+                    transparent: true,
+                    // srs: 3857
+                }],
+            }
+            // layer: L.tileLayer.wms("https://services.lgrb-bw.de/index.phtml?format=image/png&layers=lgrb_gu500_ov")
         },
         ]
     },
@@ -191,6 +241,15 @@ var overLayers = [
     }
 ];
 
+
+var panelLayers2 = new L.Control.PanelLayers(baseLayers, null, {
+    // selectorGroup: true,
+    collapsibleGroups: true,
+    compact: true,
+    position: 'bottomright',
+    compact: true,
+}).addTo(map);
+
 var panelLayers = new L.Control.PanelLayers(null, overLayers, {
     selectorGroup: true,
     collapsibleGroups: true,
@@ -202,19 +261,6 @@ var panelLayers = new L.Control.PanelLayers(null, overLayers, {
     compact: true
 
 }).addTo(map);
-
-var panelLayers2 = new L.Control.PanelLayers(baseLayers, null, {
-    // selectorGroup: true,
-    collapsibleGroups: true,
-    compact: true,
-    position: 'bottomright',
-    compact: true,
-}).addTo(map);
-
-L.control.scale(
-    {
-        imperial: false,
-    }).addTo(map);
 
 
 // map.addControl(panelLayers);
@@ -248,8 +294,11 @@ var isSideBySideOn = null
 
 function addSideBySide() {
     if (isSideBySideOn == null) {
-        isSideBySideOn = L.control.sideBySide([], []).addTo(map);
+        isSideBySideOn = L.control.sideBySide([], [], { thumbSize: 25, padding: 70 }).addTo(map);
         isSideBySideOn.setLeftLayers(overLayers[2].layers[0].layer)
+        // isSideBySideOn.setLeftLayers(overLayers[2].layers[0].layer)
+        // isSideBySideOn.setRightLayers(osmLayer)
+
     }
 }
 
@@ -263,13 +312,12 @@ function removeSideBySide() {
 
 function ZoomToLayer(name) {
 
-    console.log(name)
+    // console.log(name)
     for (let i = 0; i < overLayers.length; i++) {
         for (let L = 0; L < overLayers[i].layers.length; L++) {
             if (overLayers[i].layers[L].short_name == name) {
-                console.log(overLayers[i].layers[L].layer)
-
-                map.fitBounds(overLayers[i].layers[L].layer.getBounds()) // zoom to protected areas
+                overLayers[i].layers[L].layer.addTo(map);                   // make sure layer is active
+                map.fitBounds(overLayers[i].layers[L].layer.getBounds()) // zoom to layer
                 break
             }
         }
