@@ -1,3 +1,4 @@
 examples/
 .vscode
 docs
+.gitlab-ci.yml
