@@ -1,0 +1,189 @@
+body {
+    padding: 0;
+    margin: 0;
+}
+html, body, #map {
+    height: 100%;
+    width: 100%;
+}
+
+.leaflet-panel-layers-grouplabel .leaflet-panel-layers-title{
+	font-size: 15px;
+	font-weight: bold;
+}
+
+
+ .leaflet-panel-layers-title{
+	font-size: 14px;
+}
+
+
+.layer-info-img {
+    float: right;
+    display: block;
+    height: 20px;
+    width: 20px;
+    content: url(../assets/info_icon.svg);
+    cursor: help
+}
+
+.leaflet-panel-layers-item .leaflet-panel-layers-title{
+	padding-left: 2px;
+	padding-right: 50px;
+	margin-bottom: 1px;
+}
+
+.leaflet-panel-layers {
+    grid-row: 2;
+	background: aqua;
+	border-radius: 5px;
+    border: 2px solid rgba(0,0,0,.2);
+    padding: 10px;
+    box-shadow: 0 0 #0000004d;
+}
+
+.leaflet-panel-layers-selector {
+    float: right;
+	margin-right: 3px;
+	cursor: pointer;
+}
+
+.leaflet-panel-layers-group.collapsible .leaflet-panel-layers-icon:first-child {
+	min-width: 20px;
+	font-size: 40px;
+	font-weight: bold;
+
+}
+
+.tooltip {
+	position: relative;
+	display: inline-block;
+	border-bottom: 1px dotted black;
+  }
+
+  summary {
+    display: block;
+    list-style: none;
+  }
+
+
+/* Create a new custom triangle on the right side */
+summary::after {
+    margin-left: 1ch;
+    display: inline-block;
+    content: '▶️';
+    transition: 0.3s;
+  }
+
+  details[open] > summary::after {
+    transform: rotate(90deg);
+  }
+
+  details > img {
+    padding-left: 10%;
+    /* width: 50px; */
+     }
+
+  /* details > summary {
+    list-style: none;
+
+  }
+   */
+
+/* Style buttons */
+.Zoombtn {
+  background:transparent;
+  /* border: none; Remove borders */
+  /* color: black; White text */
+  /* padding: 2px 2px; Some padding */
+  /* font-size: 5px; Set a font size */
+  /* cursor: pointer; Mouse pointer on hover */
+    /* height: 40px; */
+    width: 30px;
+    border: none;
+    padding: none;
+    background: none;
+    outline: none;
+    box-shadow: none ;
+    outline-style: none;
+cursor: pointer;
+}
+
+/* Darker background on mouse-over */
+.Zoombtn:hover {
+  /* border: RoyalBlue; */
+  transform: scale(1.4);
+  padding: none;
+
+ 
+}
+
+.Zoombtn:focus{ box-shadow: none ;  
+    background: none;
+  outline: none;
+  box-shadow: none ;
+  outline-style: none;
+  
+
+}
+
+/* protected area legend */
+summary #Naturschutzgebiete {
+  margin-right: 2px;
+  width: 16px;
+    height: 11px;
+    background: red;
+    display: inline-block;
+    opacity: .7;
+}
+
+summary #Landschaftsschutzgebiet {
+  margin-right: 2px;
+  width: 16px;
+    height: 11px;
+    background: #408080;
+    display: inline-block;    opacity: .7;
+
+}
+summary #Biosphaerengebiet {
+  margin-right: 2px;
+  width: 16px;
+    height: 11px;
+    background: blue;
+    display: inline-block;    opacity: .7;
+
+}
+
+summary #FFH_Gebiet {
+  margin-right: 2px;
+  width: 16px;
+    height: 11px;
+    background: #ff8040;
+    display: inline-block;    opacity: .7;
+
+}
+
+summary #Vogelschutzgebiet {
+  margin-right: 2px;
+  width: 16px;
+    height: 11px;
+    background: #8000ff;
+    display: inline-block;    opacity: .7;
+
+}
+summary #Naturepark {
+  margin-right: 2px;
+  width: 16px;
+    height: 11px;
+    background: #808000;
+    display: inline-block;    opacity: .7;
+
+}
+summary #Wasserschutzgebiete {
+  margin-right: 2px;
+  width: 16px;
+    height: 11px;
+    background: #ed29a4;
+    display: inline-block;    opacity: .7;
+
+}
