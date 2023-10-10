@@ -1,4 +1,4 @@
-{
+var germanBoundary = {
 "type": "FeatureCollection",
                                                                                 
 "features": [
