@@ -72,6 +72,14 @@ L.control.scale(
     }).addTo(map);
 
 
+L.geoJson(germanBoundary, {
+    // Add invert: true to invert the geometries in the GeoJSON file
+    invert: true,
+    renderer: L.svg({ padding: 1 }),
+    color: 'gray', fillOpacity: 0.7, weight: 0
+}).addTo(map);
+
+
 map.on("bfl:layerloaded", function () { notification.success('Success', 'Data loaded successfully'); })
 map.on("bfl:layerloaderror", function () { notification.alert('Error', 'Unable to load file'); })
 map.on("bfl:filenotsupported", function () { notification.alert('Error', 'File type not supported'); })
