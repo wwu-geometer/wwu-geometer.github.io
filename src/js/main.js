@@ -407,7 +407,7 @@ function updateLayersListInSwipePanel() {
 
 
 
-function getfullName(short_name, legend) {
+function getfullName(short_name, legend, attribution) {
 
     let container = L.DomUtil.create('div');
     let details = L.DomUtil.create('details', '', container);
@@ -416,6 +416,11 @@ function getfullName(short_name, legend) {
     div.setAttribute('id', short_name);
     summary.innerHTML += short_name;
 
+
+    let infoIcon = L.DomUtil.create("img", "layer-info-img", details);
+    infoIcon.alt = "\u{1F6C8}";
+    infoIcon.title = "Attribution";
+    infoIcon.setAttribute('onclick', "alert('" + short_name + "')");
 
     let legendHolder = L.DomUtil.create("img", "", details);
     legendHolder.setAttribute('src', legend);
@@ -426,16 +431,7 @@ function getfullName(short_name, legend) {
     ZoomToBtnIcon.setAttribute('src', "./src/assets/magnifying-glass-location-solid.svg");
     ZoomToBtnIcon.setAttribute('title', "zoom to layer");
     // ZoomToBtn.innerText += 'onclick=ZoomToLayer("Geology")'
-    ZoomToBtn.setAttribute('onclick', "ZoomToLayer('" + short_name + "')");
+    ZoomToBtn.setAttribute('onclick', "ShowAttribution('" + short_name + "," + attribution + "')");
 
-    // ZoomToBtn.addEventListener("click", function () { alert('@ Attribution') })
-    // L.DomEvent.addListener(ZoomToBtn, "click", function () { alert('@ Attribution') });
-
-    // i.alt = "\u{1F6C8}";
-    // i.title = "Attribution";
-    // L.DomEvent.on(i, "click", function () { alert('@ Attribution') });
-
-    // let txt = '<details><summary><div id="Geology"></div>Geology2</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button" ,  onclick=ZoomToLayer("Geology")> <img src="./src/assets/magnifying-glass-location-solid.svg", title ="zoom to layer" /img></button> </details>  '
-    // console.log(container.innerHTML)
     return container.innerHTML
 }
