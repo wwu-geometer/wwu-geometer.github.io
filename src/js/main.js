@@ -6,6 +6,7 @@ var map = L.map('map', {
     fullscreenControlOptions: {
         position: 'topleft',
     },
+
     // contextmenu: true,
     // contextmenuWidth: 140,
     // contextmenuItems: [{
@@ -25,6 +26,12 @@ var map = L.map('map', {
     // }]
 });
 
+map.addControl(new L.Control.LinearMeasurement({
+    unitSystem: 'metric',
+    color: '#FF0080',
+    type: 'line'
+}));
+
 var hash = new L.Hash(map);
 
 var notification = L.control
@@ -42,7 +49,7 @@ L.Control.geocoder({ position: "topleft", showResultIcons: true }).addTo(map);
 // notification.success('Success', 'Data loaded');
 
 L.Control.betterFileLayer({
-    fileSizeLimit: 10240, // File size limit in kb (10 MB))
+    fileSizeLimit: 60240, // File size limit in kb (10 MB))
 }).addTo(map);
 
 
@@ -72,27 +79,44 @@ L.control.scale(
     }).addTo(map);
 
 
+L.geoJson(germanBoundary, {
+    // Add invert: true to invert the geometries in the GeoJSON file
+    invert: true,
+    renderer: L.svg({ padding: 1 }),
+    color: 'gray', fillOpacity: 0.7, weight: 0
+}).addTo(map);
+
+
 map.on("bfl:layerloaded", function () { notification.success('Success', 'Data loaded successfully'); })
 map.on("bfl:layerloaderror", function () { notification.alert('Error', 'Unable to load file'); })
 map.on("bfl:filenotsupported", function () { notification.alert('Error', 'File type not supported'); })
 map.on("bfl:layerisempty", function () { notification.warning('Error', 'No features in file'); })
-map.on("bfl:filesizelimit", function () { notification.alert('Error', 'Maximun file size allowed is 10 MB'); })
+map.on("bfl:filesizelimit", function () { notification.alert('Error', 'Maximun file size allowed is 50 MB'); })
 
 
 
 
 osmLayer = new L.TileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', {
     maxZoom: 18,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 });
 
-OpenTopoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',);
+OpenTopoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+    maxZoom: 17,
+    attribution:
+        'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+});
 
-Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',);
+Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+
+});
 
 
-googleHybrid = L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
+googleHybrid = L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', { //lyrs: Hybrid: s,h;Satellite: s;Streets: m;Terrain: p;
     maxZoom: 20,
-    subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+    subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+    attribution: '',
 });
 
 // var layerControl = L.control.layers({ "osmLayer": osmLayer }, []).addTo(map);
@@ -105,57 +129,101 @@ var baseLayers = [
         icon: '<span class="fa fa-solid fa-bars"></span>',
         layers: [
             {
-                name: "Open Street Map",
+                name: getfullName("Open Street Map", "", osmLayer.getAttribution()),
                 layer: osmLayer,
                 active: true,
+                zIndex: 0,
             },
             {
-                name: "Open Topo Map",
-                layer: OpenTopoMap
+                name: getfullName("Open Topo Map", " ", OpenTopoMap.getAttribution()),
+                layer: OpenTopoMap,
+                zIndex: 0,
+
             },
             {
-                name: "Esri World Imagery",
-                layer: Esri_WorldImagery
+                name: getfullName("Google Hybrid", " ", googleHybrid.getAttribution()),
+                layer: googleHybrid,
+                zIndex: 0,
             },
             {
-                name: "Google Hybrid",
-                layer: googleHybrid
+                name: getfullName("Esri World Imagery", " ", Esri_WorldImagery.getAttribution()),
+                layer: Esri_WorldImagery,
+                zIndex: 0,
             },
+
         ],
     },
 ]
 
 var overLayers = [
     {
-        group: "Road Layers",
+        group: "Infrastructure",
         collapsed: true,
-        layers: [
-            {
-                name: "Open Cycle Map",
-                short_name: "Open Cycle Map",
-                layer: L.tileLayer('https://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png')
-            },
-            {
-                name: "Transports",
-                layer: L.tileLayer('https://{s}.tile2.opencyclemap.org/transport/{z}/{x}/{y}.png'),
-                short_name: "Transports",
-            },
-        ]
+        layers: [{
+            active: true,
+            // name: '  <details><summary><div id="Naturschutzgebiete"></div>Naturschutzgebiete</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button",title ="zoom to layer", onclick=ZoomToLayer("Naturschutzgebiete")> <img src="./src/assets/magnifying-glass-location-solid.svg" , title ="zoom to layer"  /img></button> </details>  ',
+            short_name: "Powerline",
+            legend: "",
+            name: getfullName("Powerline", ''),
+            layer: L.geoJSON(Powerline, {
+                onEachFeature: function (f, l) {
+                }, color: 'red', weight: 1,
+            },),
+        },
+        {
+            active: true,
+            // name: '  <details><summary><div id="Naturschutzgebiete"></div>Naturschutzgebiete</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button",title ="zoom to layer", onclick=ZoomToLayer("Naturschutzgebiete")> <img src="./src/assets/magnifying-glass-location-solid.svg" , title ="zoom to layer"  /img></button> </details>  ',
+            short_name: "Biberbahn",
+            legend: "",
+            name: getfullName("Biberbahn", ''),
+            layer: L.geoJSON(Biberbahn, {
+                onEachFeature: function (f, l) {
+                }, color: 'blue', weight: 1,
+            },),
+        },
 
+        {
+            active: true,
+            // name: '  <details><summary><div id="Naturschutzgebiete"></div>Naturschutzgebiete</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button",title ="zoom to layer", onclick=ZoomToLayer("Naturschutzgebiete")> <img src="./src/assets/magnifying-glass-location-solid.svg" , title ="zoom to layer"  /img></button> </details>  ',
+            short_name: "RailwayLines",
+            legend: "",
+            name: getfullName("RailwayLines", ''),
+            layer: L.geoJSON(RailwayLines, {
+                onEachFeature: function (f, l) {
+                }, color: '#408080', weight: 1,
+            },),
+        },
+        {
+            active: true,
+            // name: '  <details><summary><div id="Naturschutzgebiete"></div>Naturschutzgebiete</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button",title ="zoom to layer", onclick=ZoomToLayer("Naturschutzgebiete")> <img src="./src/assets/magnifying-glass-location-solid.svg" , title ="zoom to layer"  /img></button> </details>  ',
+            short_name: "Gas_pipelines",
+            legend: "",
+            name: getfullName("Gas_pipelines", ''),
+            layer: L.geoJSON(Gas_pipeline, {
+                onEachFeature: function (f, l) {
+                }, color: '#ff8040', weight: 1,
+            },),
+        },
+        ]
     },
+
+
     {
         group: 'Geology',
         collapsed: false,
         layers: [{
-            name: '<details><summary><div id="Geology"></div>Geology</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button" ,  onclick=ZoomToLayer("Geology")> <img src="./src/assets/magnifying-glass-location-solid.svg", title ="zoom to layer" /img></button> </details>  ',
             short_name: "Geology",
-            active: true,
+            legend: '',
+            active: false,
+            name: getfullName("Geology", ''),
             layer: {
                 type: "tileLayer.wms",
                 args: ["https://services.bgr.de/wms/geologie/guek200/?", {
                     layers: 1,
                     format: 'image/png',
                     transparent: true,
+                    zIndex: 1,
+
                     // srs: 3857
                 }],
             }
@@ -168,8 +236,10 @@ var overLayers = [
         collapsed: true,
         layers: [{
             active: false,
-            name: '  <details><summary><div id="Naturschutzgebiete"></div>Naturschutzgebiete</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button",title ="zoom to layer", onclick=ZoomToLayer("Naturschutzgebiete")> <img src="./src/assets/magnifying-glass-location-solid.svg" , title ="zoom to layer"  /img></button> </details>  ',
+            // name: '  <details><summary><div id="Naturschutzgebiete"></div>Naturschutzgebiete</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button",title ="zoom to layer", onclick=ZoomToLayer("Naturschutzgebiete")> <img src="./src/assets/magnifying-glass-location-solid.svg" , title ="zoom to layer"  /img></button> </details>  ',
             short_name: "Naturschutzgebiete",
+            legend: "",
+            name: getfullName("Naturschutzgebiete", ''),
             layer: L.geoJSON(Naturschutzgebiete, {
                 onEachFeature: function (f, l) {
                     l.bindPopup('<pre>' + JSON.stringify(f.properties, null, ' ').replace(/[\{\}"]/g, '') + '</pre>');
@@ -178,8 +248,10 @@ var overLayers = [
         },
         {
             active: false,
-            name: '  <details><summary><div id="Landschaftsschutzgebiet"></div>Landschaftsschutzgebiet</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button" ,  onclick=ZoomToLayer("Landschaftsschutzgebiet")> <img src="./src/assets/magnifying-glass-location-solid.svg", title ="zoom to layer" /img></button> </details>  ',
+            // name: '  <details><summary><div id="Landschaftsschutzgebiet"></div>Landschaftsschutzgebiet</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button" ,  onclick=ZoomToLayer("Landschaftsschutzgebiet")> <img src="./src/assets/magnifying-glass-location-solid.svg", title ="zoom to layer" /img></button> </details>  ',
             short_name: "Landschaftsschutzgebiet",
+            legend: "",
+            name: getfullName("Landschaftsschutzgebiet", ''),
             layer: L.geoJSON(Landschaftsschutzgebiet, {
                 onEachFeature: function (f, l) {
                     l.bindPopup('<pre>' + JSON.stringify(f.properties, null, ' ').replace(/[\{\}"]/g, '') + '</pre>');
@@ -188,8 +260,10 @@ var overLayers = [
         },
         {
             active: false,
-            name: '  <details><summary><div id="Biosphaerengebiet"></div>Biosphaerengebiet</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button" ,  onclick=ZoomToLayer("Biosphaerengebiet")> <img src="./src/assets/magnifying-glass-location-solid.svg", title ="zoom to layer" /img></button> </details>  ',
+            // name: '  <details><summary><div id="Biosphaerengebiet"></div>Biosphaerengebiet</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button" ,  onclick=ZoomToLayer("Biosphaerengebiet")> <img src="./src/assets/magnifying-glass-location-solid.svg", title ="zoom to layer" /img></button> </details>  ',
             short_name: "Biosphaerengebiet",
+            legend: "",
+            name: getfullName("Biosphaerengebiet", ''),
             layer: L.geoJSON(Biosphaerengebiet, {
                 onEachFeature: function (f, l) {
                     l.bindPopup('<pre>' + JSON.stringify(f.properties, null, ' ').replace(/[\{\}"]/g, '') + '</pre>');
@@ -198,8 +272,10 @@ var overLayers = [
         },
         {
             active: false,
-            name: '  <details><summary><div id="FFH_Gebiet"></div>FFH-Gebiet</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button" ,  onclick=ZoomToLayer("FFH-Gebiet")> <img src="./src/assets/magnifying-glass-location-solid.svg", title ="zoom to layer" /img></button> </details>  ',
+            // name: '  <details><summary><div id="FFH_Gebiet"></div>FFH-Gebiet</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button" ,  onclick=ZoomToLayer("FFH-Gebiet")> <img src="./src/assets/magnifying-glass-location-solid.svg", title ="zoom to layer" /img></button> </details>  ',
             short_name: "FFH-Gebiet",
+            legend: "",
+            name: getfullName("FFH-Gebiet", ''),
             layer: L.geoJSON(FFH_Gebiet, {
                 onEachFeature: function (f, l) {
                     l.bindPopup('<pre>' + JSON.stringify(f.properties, null, ' ').replace(/[\{\}"]/g, '') + '</pre>');
@@ -208,8 +284,10 @@ var overLayers = [
         },
         {
             active: false,
-            name: '  <details><summary><div id="Vogelschutzgebiet"></div>Vogelschutzgebiet</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button" ,  onclick=ZoomToLayer("Vogelschutzgebiet")> <img src="./src/assets/magnifying-glass-location-solid.svg", title ="zoom to layer" /img></button> </details>  ',
+            // name: '  <details><summary><div id="Vogelschutzgebiet"></div>Vogelschutzgebiet</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button" ,  onclick=ZoomToLayer("Vogelschutzgebiet")> <img src="./src/assets/magnifying-glass-location-solid.svg", title ="zoom to layer" /img></button> </details>  ',
             short_name: "Vogelschutzgebiet",
+            legend: "",
+            name: getfullName("Vogelschutzgebiet", ''),
             layer: L.geoJSON(Vogelschutzgebiet, {
                 onEachFeature: function (f, l) {
                     l.bindPopup('<pre>' + JSON.stringify(f.properties, null, ' ').replace(/[\{\}"]/g, '') + '</pre>');
@@ -218,8 +296,10 @@ var overLayers = [
         },
         {
             active: true,
-            name: '  <details><summary><div id="Naturepark"></div>Naturepark</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button" ,  onclick=ZoomToLayer("Naturepark")> <img src="./src/assets/magnifying-glass-location-solid.svg", title ="zoom to layer" /img></button> </details>  ',
+            // name: '  <details><summary><div id="Naturepark"></div>Naturepark</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button" ,  onclick=ZoomToLayer("Naturepark")> <img src="./src/assets/magnifying-glass-location-solid.svg", title ="zoom to layer" /img></button> </details>  ',
             short_name: "Naturepark",
+            legend: "",
+            name: getfullName("Naturepark", ''),
             layer: L.geoJSON(Naturepark, {
                 onEachFeature: function (f, l) {
                     l.bindPopup('<pre>' + JSON.stringify(f.properties, null, ' ').replace(/[\{\}"]/g, '') + '</pre>');
@@ -229,8 +309,10 @@ var overLayers = [
 
         {
             active: false,
-            name: '  <details><summary><div id="Wasserschutzgebiete"></div>Wasserschutzgebiete</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button" ,  onclick=ZoomToLayer("Wasserschutzgebiete")> <img src="./src/assets/magnifying-glass-location-solid.svg", title ="zoom to layer" /img></button> </details>  ',
+            // name: '  <details><summary><div id="Wasserschutzgebiete"></div>Wasserschutzgebiete</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button" ,  onclick=ZoomToLayer("Wasserschutzgebiete")> <img src="./src/assets/magnifying-glass-location-solid.svg", title ="zoom to layer" /img></button> </details>  ',
             short_name: "Wasserschutzgebiete",
+            legend: "",
+            name: getfullName("Wasserschutzgebiete", ''),
             layer: L.geoJSON(Wasserschutzgebiete, {
                 onEachFeature: function (f, l) {
                     l.bindPopup('<pre>' + JSON.stringify(f.properties, null, ' ').replace(/[\{\}"]/g, '') + '</pre>');
@@ -242,12 +324,14 @@ var overLayers = [
 ];
 
 
-var panelLayers2 = new L.Control.PanelLayers(baseLayers, null, {
+var panelLayersBase = new L.Control.PanelLayers(baseLayers, null, {
     // selectorGroup: true,
     collapsibleGroups: true,
     compact: true,
     position: 'bottomright',
     compact: true,
+    autoZIndex: false,
+
 }).addTo(map);
 
 var panelLayers = new L.Control.PanelLayers(null, overLayers, {
@@ -312,7 +396,7 @@ function removeSideBySide() {
 
 function ZoomToLayer(name) {
 
-    // console.log(name)
+    console.log(name)
     for (let i = 0; i < overLayers.length; i++) {
         for (let L = 0; L < overLayers[i].layers.length; L++) {
             if (overLayers[i].layers[L].short_name == name) {
@@ -336,12 +420,6 @@ var browserControl = L.control.browserPrint({ position: 'topleft', title: 'Print
 
 
 
-
-
-
-
-
-
 function updateLayersList() {
 
     for (let i = 0; i < overLayers.length; i++) {
@@ -361,4 +439,63 @@ function updateLayersListInSwipePanel() {
 
     }
 
+}
+
+
+
+function getfullName(short_name, legend, attribution) {
+
+    let container = L.DomUtil.create('div');
+    let details = L.DomUtil.create('details', '', container);
+    let summary = L.DomUtil.create('summary', '', details);
+    let div = L.DomUtil.create('div', '', summary);
+    div.setAttribute('id', short_name);
+    summary.innerHTML += short_name;
+
+
+    let infoIcon = L.DomUtil.create("img", "layer-info-img", details);
+    infoIcon.alt = "\u{1F6C8}";
+    infoIcon.title = "Attribution";
+    // infoIcon.setAttribute("data-target", "#exampleModalCenter")
+    // infoIcon.setAttribute('onclick', "alert('" + short_name + "')");
+    infoIcon.setAttribute('onclick', "ShowAttribution('" + short_name + "," + attribution + "')");
+
+
+    let legendHolder = L.DomUtil.create("img", "", details);
+    legendHolder.setAttribute('src', legend);
+
+    let ZoomToBtn = L.DomUtil.create("button", "Zoombtn", details);
+    ZoomToBtn.setAttribute('type', "button");
+    let ZoomToBtnIcon = L.DomUtil.create("img", "", ZoomToBtn);
+    ZoomToBtnIcon.setAttribute('src', "./src/assets/magnifying-glass-location-solid.svg");
+    ZoomToBtnIcon.setAttribute('title', "zoom to layer");
+    // ZoomToBtn.innerText += 'onclick=ZoomToLayer("Geology")'
+    ZoomToBtn.setAttribute('onclick', "ZoomToLayer('" + short_name + "')");
+
+    return container.innerHTML
+}
+
+
+function ShowAttribution(short_name, attribution) {
+
+    let modalTitle = document.getElementById("myModalTitle")
+    modalTitle.innerHTML = short_name
+
+    let modalBody = document.getElementById("myModalBody")
+    modalBody.innerHTML = attribution
+
+    // let modalContainer = document.getElementById(myModal)
+    // modalBody.modal('toggle');
+
+    $('#myModal').modal('show')
+
+
+    console.log(short_name)
+    console.log(attribution)
+    // let modal = L.DomUtil.create("div")
+
+    // modal.innerHTML =
+    // '<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">  <div class="modal-dialog modal-dialog-centered" role="document">    <div class="modal-content">      <div class="modal-header">        <h5 class="modal-title" id="exampleModalLongTitle"></h5>        <button type="button" class="close" data-dismiss="modal" aria-label="Close">          <span aria-hidden="true">&times;</span>        </button>      </div>      <div class="modal-body"> </div>      <div class="modal-footer">        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>      </div>    </div>  </div></div>'
+
+    // return modal
 }

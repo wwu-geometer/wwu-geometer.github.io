@@ -216,7 +216,7 @@
 			// let infoIcon = L.DomUtil.create("img", "layer-info-img");
 			// infoIcon.alt = "\u{1F6C8}"
 			// L.DomEvent.on(infoIcon, "click", function () { alert('ddd') }, this._map)
-			infoIcon = this._insertInfoButton()
+			// infoIcon = this._insertInfoButton()
 
 			var label = L.DomUtil.create('label', this.className + '-title');
 			//TODo label.htmlFor = input.id;
@@ -236,7 +236,7 @@
 
 			label.appendChild(input);
 			label.appendChild(title);
-			item.appendChild(infoIcon);
+			// item.appendChild(infoIcon);
 			item.appendChild(label);
 
 			if (this.options.buildItem) {
