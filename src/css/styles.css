@@ -191,3 +191,46 @@ summary #Wasserschutzgebiete {
     display: inline-block;    opacity: .7;
 
 }
+
+/* protected area legend */
+summary #Powerline {
+  margin-right: 2px;
+  
+  width: 16px;
+    height: 2px;
+    background: red;
+    display: inline-block;
+    opacity: .7;
+}
+
+/* protected area legend */
+summary #Biberbahn {
+  margin-right: 2px;
+  
+  width: 16px;
+    height: 2px;
+    background: blue;
+    display: inline-block;
+    opacity: .7;
+}
+
+/* protected area legend */
+summary #RailwayLines {
+  margin-right: 2px;
+  
+  width: 16px;
+    height: 2px;
+    background: #408080;
+    display: inline-block;
+    opacity: .7;
+}
+
+/* protected area legend */
+summary #Gas_pipelines {
+  margin-right: 2px;
+    width: 16px;
+    height: 2px;
+    background: #ff8040;
+    display: inline-block;
+    opacity: .7;
+}
