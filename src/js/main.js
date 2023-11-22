@@ -129,24 +129,24 @@ var baseLayers = [
         icon: '<span class="fa fa-solid fa-bars"></span>',
         layers: [
             {
-                name: "Open Street Map",
+                name: getfullName("Open Street Map", "", osmLayer.getAttribution()),
                 layer: osmLayer,
                 active: true,
                 zIndex: 0,
             },
             {
-                name: "Open Topo Map",
+                name: getfullName("Open Topo Map", " ", OpenTopoMap.getAttribution()),
                 layer: OpenTopoMap,
                 zIndex: 0,
 
             },
             {
-                name: "Google Hybrid",
+                name: getfullName("Google Hybrid", " ", googleHybrid.getAttribution()),
                 layer: googleHybrid,
                 zIndex: 0,
             },
             {
-                name: "Esri World Imagery",
+                name: getfullName("Esri World Imagery", " ", Esri_WorldImagery.getAttribution()),
                 layer: Esri_WorldImagery,
                 zIndex: 0,
             },
@@ -420,12 +420,6 @@ var browserControl = L.control.browserPrint({ position: 'topleft', title: 'Print
 
 
 
-
-
-
-
-
-
 function updateLayersList() {
 
     for (let i = 0; i < overLayers.length; i++) {
@@ -462,7 +456,10 @@ function getfullName(short_name, legend, attribution) {
     let infoIcon = L.DomUtil.create("img", "layer-info-img", details);
     infoIcon.alt = "\u{1F6C8}";
     infoIcon.title = "Attribution";
-    infoIcon.setAttribute('onclick', "alert('" + short_name + "')");
+    // infoIcon.setAttribute("data-target", "#exampleModalCenter")
+    // infoIcon.setAttribute('onclick', "alert('" + short_name + "')");
+    infoIcon.setAttribute('onclick', "ShowAttribution('" + short_name + "," + attribution + "')");
+
 
     let legendHolder = L.DomUtil.create("img", "", details);
     legendHolder.setAttribute('src', legend);
@@ -473,7 +470,32 @@ function getfullName(short_name, legend, attribution) {
     ZoomToBtnIcon.setAttribute('src', "./src/assets/magnifying-glass-location-solid.svg");
     ZoomToBtnIcon.setAttribute('title', "zoom to layer");
     // ZoomToBtn.innerText += 'onclick=ZoomToLayer("Geology")'
-    ZoomToBtn.setAttribute('onclick', "ShowAttribution('" + short_name + "," + attribution + "')");
+    ZoomToBtn.setAttribute('onclick', "ZoomToLayer('" + short_name + "')");
 
     return container.innerHTML
+}
+
+
+function ShowAttribution(short_name, attribution) {
+
+    let modalTitle = document.getElementById("myModalTitle")
+    modalTitle.innerHTML = short_name
+
+    let modalBody = document.getElementById("myModalBody")
+    modalBody.innerHTML = attribution
+
+    // let modalContainer = document.getElementById(myModal)
+    // modalBody.modal('toggle');
+
+    $('#myModal').modal('show')
+
+
+    console.log(short_name)
+    console.log(attribution)
+    // let modal = L.DomUtil.create("div")
+
+    // modal.innerHTML =
+    // '<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">  <div class="modal-dialog modal-dialog-centered" role="document">    <div class="modal-content">      <div class="modal-header">        <h5 class="modal-title" id="exampleModalLongTitle"></h5>        <button type="button" class="close" data-dismiss="modal" aria-label="Close">          <span aria-hidden="true">&times;</span>        </button>      </div>      <div class="modal-body"> </div>      <div class="modal-footer">        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>      </div>    </div>  </div></div>'
+
+    // return modal
 }
