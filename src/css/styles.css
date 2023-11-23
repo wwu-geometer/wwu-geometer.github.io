@@ -72,7 +72,7 @@ html, body, #map {
 summary::after {
     margin-left: 1ch;
     display: inline-block;
-    content: '⯈';
+    content: '>>';
     /* content: '▶️'; */
 
     /* content: url('../assets/right_arrow_icon.svg'); */
