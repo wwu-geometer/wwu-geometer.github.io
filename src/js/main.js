@@ -1,30 +1,32 @@
+
 var map = L.map('map', {
     zoom: 10,
-    center: L.latLng([48.0122, 9.2894]),
+    center: L.latLng([53.4521, 9.4807]),
     attributionControl: false,
     fullscreenControl: true,
     fullscreenControlOptions: {
         position: 'topleft',
     },
 
-    // contextmenu: true,
-    // contextmenuWidth: 140,
-    // contextmenuItems: [{
-    //     text: 'Show coordinates',
-    //     callback: showCoordinates
-    // }, {
-    //     text: 'Center map here',
-    //     callback: centerMap
-    // }, '-', {
-    //     text: 'Zoom in',
-    //     icon: 'images/zoom-in.png',
-    //     callback: zoomIn
-    // }, {
-    //     text: 'Zoom out',
-    //     icon: 'images/zoom-out.png',
-    //     callback: zoomOut
-    // }]
+    contextmenu: true,
+    contextmenuWidth: 140,
+    contextmenuItems: [{
+        text: 'Show coordinates',
+        callback: showCoordinates
+    }, {
+        text: 'Center map here',
+        callback: centerMap
+    }, '-', {
+        text: 'Zoom in',
+        icon: './src/assets/zoom-in.png',
+        callback: zoomIn
+    }, {
+        text: 'Zoom out',
+        icon: './src/assets/zoom-out.png',
+        callback: zoomOut
+    }]
 });
+
 
 map.addControl(new L.Control.LinearMeasurement({
     unitSystem: 'metric',
@@ -53,25 +55,32 @@ L.Control.betterFileLayer({
 }).addTo(map);
 
 
-// function showCoordinates(e) {
-//     var popup = L.popup()
-//         .setLatLng(latlng)
-//         .setContent('<p>Hello world!<br />This is a nice popup.</p>')
-//         .openOn(map);
-//     // alert(e.latlng);
-// }
+function showCoordinates(e) {
+    const lat = e.latlng.lat.toFixed(6);
+    const lng = e.latlng.lng.toFixed(6);
 
-// function centerMap(e) {
-//     map.panTo(e.latlng);
-// }
+    const popup = L.popup()
+        .setLatLng(e.latlng)
+        .setContent(
+            `<b>Coordinates</b><br>
+             Latitude: ${lat}°<br>
+             Longitude: ${lng}°`
+        )
+        .openOn(map);
+}
 
-// function zoomIn(e) {
-//     map.zoomIn();
-// }
 
-// function zoomOut(e) {
-//     map.zoomOut();
-// }
+function centerMap(e) {
+    map.panTo(e.latlng);
+}
+
+function zoomIn(e) {
+    map.zoomIn();
+}
+
+function zoomOut(e) {
+    map.zoomOut();
+}
 
 L.control.scale(
     {
@@ -118,99 +127,472 @@ googleHybrid = L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}'
     subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
     attribution: '',
 });
+var layers = [];
+for (var providerId in providers) {
+    layers.push(providers[providerId]);
+}
+var ctrl = L.control.iconLayers(layers).addTo(map);
 
 // var layerControl = L.control.layers({ "osmLayer": osmLayer }, []).addTo(map);
 // layerControl.addBaseLayer(osmLayer, "osmLayer");
 
 var baseLayers = [
-    {
-        group: "Base Layers",
-        collapsed: true,
-        icon: '<span class="fa fa-solid fa-bars"></span>',
-        layers: [
-            {
-                name: getfullName("Open Street Map", "", osmLayer.getAttribution()),
-                layer: osmLayer,
-                active: true,
-                zIndex: 0,
-            },
-            {
-                name: getfullName("Open Topo Map", " ", OpenTopoMap.getAttribution()),
-                layer: OpenTopoMap,
-                zIndex: 0,
+    //     {
+    //         group: "Base Layers",
+    //         collapsed: true,
+    //         icon: '<span class="fa fa-solid fa-bars"></span>',
+    //         layers: [
+    //             {
+    //                 name: getfullName("Open Street Map", "", osmLayer.getAttribution()),
+    //                 layer: osmLayer,
+    //                 active: true,
+    //                 zIndex: 0,
+    //             },
+    //             {
+    //                 name: getfullName("Open Topo Map", " ", OpenTopoMap.getAttribution()),
+    //                 layer: OpenTopoMap,
+    //                 zIndex: 0,
 
-            },
-            {
-                name: getfullName("Google Hybrid", " ", googleHybrid.getAttribution()),
-                layer: googleHybrid,
-                zIndex: 0,
-            },
-            {
-                name: getfullName("Esri World Imagery", " ", Esri_WorldImagery.getAttribution()),
-                layer: Esri_WorldImagery,
-                zIndex: 0,
-            },
+    //             },
+    //             {
+    //                 name: getfullName("Google Hybrid", " ", googleHybrid.getAttribution()),
+    //                 layer: googleHybrid,
+    //                 zIndex: 0,
+    //             },
+    //             {
+    //                 name: getfullName("Esri World Imagery", " ", Esri_WorldImagery.getAttribution()),
+    //                 layer: Esri_WorldImagery,
+    //                 zIndex: 0,
+    //             },
 
-        ],
-    },
+    //         ],
+    //     },
 ]
+
+
+const windTurbineIcon = L.icon({
+    iconUrl: './src/assets/wind-turbine.svg',
+    iconSize: [30, 30],           // adjust size as needed
+    iconAnchor: [15, 30],         // point of the icon which will correspond to marker's location
+    popupAnchor: [0, -30]         // where the popup opens relative to the iconAnchor
+});
+map.createPane('topLayerPane');
+map.getPane('topLayerPane').style.zIndex = 999;
 
 var overLayers = [
     {
-        group: "Infrastructure",
-        collapsed: true,
-        layers: [{
-            active: true,
-            // name: '  <details><summary><div id="Naturschutzgebiete"></div>Naturschutzgebiete</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button",title ="zoom to layer", onclick=ZoomToLayer("Naturschutzgebiete")> <img src="./src/assets/magnifying-glass-location-solid.svg" , title ="zoom to layer"  /img></button> </details>  ',
-            short_name: "Powerline",
-            legend: "",
-            name: getfullName("Powerline", ''),
-            layer: L.geoJSON(Powerline, {
-                onEachFeature: function (f, l) {
-                }, color: 'red', weight: 1,
-            },),
-        },
-        {
-            active: true,
-            // name: '  <details><summary><div id="Naturschutzgebiete"></div>Naturschutzgebiete</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button",title ="zoom to layer", onclick=ZoomToLayer("Naturschutzgebiete")> <img src="./src/assets/magnifying-glass-location-solid.svg" , title ="zoom to layer"  /img></button> </details>  ',
-            short_name: "Biberbahn",
-            legend: "",
-            name: getfullName("Biberbahn", ''),
-            layer: L.geoJSON(Biberbahn, {
-                onEachFeature: function (f, l) {
-                }, color: 'blue', weight: 1,
-            },),
-        },
-
-        {
-            active: true,
-            // name: '  <details><summary><div id="Naturschutzgebiete"></div>Naturschutzgebiete</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button",title ="zoom to layer", onclick=ZoomToLayer("Naturschutzgebiete")> <img src="./src/assets/magnifying-glass-location-solid.svg" , title ="zoom to layer"  /img></button> </details>  ',
-            short_name: "RailwayLines",
-            legend: "",
-            name: getfullName("RailwayLines", ''),
-            layer: L.geoJSON(RailwayLines, {
-                onEachFeature: function (f, l) {
-                }, color: '#408080', weight: 1,
-            },),
-        },
-        {
-            active: true,
-            // name: '  <details><summary><div id="Naturschutzgebiete"></div>Naturschutzgebiete</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button",title ="zoom to layer", onclick=ZoomToLayer("Naturschutzgebiete")> <img src="./src/assets/magnifying-glass-location-solid.svg" , title ="zoom to layer"  /img></button> </details>  ',
-            short_name: "Gas_pipelines",
-            legend: "",
-            name: getfullName("Gas_pipelines", ''),
-            layer: L.geoJSON(Gas_pipeline, {
-                onEachFeature: function (f, l) {
-                }, color: '#ff8040', weight: 1,
-            },),
-        },
-        ]
+        name: getfullName("Target area", ''),
+        active: true,
+        layer: L.geoJSON(target_area, {
+            style: {
+                color: 'black',
+                weight: 2,
+                opacity: 1,
+                fill: false,
+                fillOpacity: 0
+            },
+            onEachFeature: bindFilteredPopup
+        }),
     },
 
+    {
+        group: "SAEM Heli_Tx",
+        collapsed: false,
+        layers: [
+            // -- Existing Heli_Flight_1 to Heli_Flight_4 here --
+
+            {
+                active: true,
+                short_name: "Heli_Transmitter_1",
+                legend: "",
+                name: getfullName("Transmitter 1", ''),
+                layer: L.geoJSON(Heli_transmitters, {
+                    pane: 'topLayerPane',
+
+                    filter: f => f.properties.id === 1,
+                    style: {
+                        className: 'heli-shadow',
+                        color: '#ff0000',
+                        weight: 5,
+                        opacity: 1,
+
+                    },
+                    onEachFeature: bindFilteredPopup
+                })
+            },
+            {
+                active: true,
+                short_name: "Heli_Transmitter_2",
+                legend: "",
+                name: getfullName("Transmitter 2", ''),
+                layer: L.geoJSON(Heli_transmitters, {
+                    pane: 'topLayerPane',
+                    filter: f => f.properties.id === 2,
+                    style: {
+                        className: 'heli-shadow',
+                        color: '#00cc00',
+                        weight: 4,
+                        opacity: 1
+                    },
+                    onEachFeature: bindFilteredPopup
+                })
+            },
+            {
+                active: true,
+                short_name: "Heli_Transmitter_3",
+                legend: "",
+                name: getfullName("Transmitter 3", ''),
+                layer: L.geoJSON(Heli_transmitters, {
+                    pane: 'topLayerPane',
+
+                    filter: f => f.properties.id === 3,
+                    style: {
+                        className: 'heli-shadow',
+                        color: '#0066ff',
+                        weight: 4,
+                        opacity: 1
+                    },
+                    onEachFeature: bindFilteredPopup
+                })
+            },
+            {
+                active: true,
+                short_name: "Heli_Transmitter_4",
+                legend: "",
+                name: getfullName("Transmitter 4", ''),
+                layer: L.geoJSON(Heli_transmitters, {
+                    pane: 'topLayerPane',
+
+                    filter: f => f.properties.id === 4,
+                    style: {
+                        className: 'heli-shadow',
+                        color: '#ff9900',
+                        weight: 4,
+                        opacity: 1
+                    },
+                    onEachFeature: bindFilteredPopup
+                })
+            }
+        ]
+    }
+    ,
+    {
+        group: "SAEM Heli_flights",
+        collapsed: false,
+        layers: [
+            {
+                active: true,
+                short_name: "Flight 1",
+                legend: "",
+                name: getfullName("Flight_1", ''),
+                layer: L.geoJSON(Heli_Flights, {
+                    filter: f => f.properties.id === 1,
+                    style: {
+                        color: 'black',
+                        weight: 1.5,
+                        fillColor: '#ff0000',
+                        fillOpacity: 0.4
+                    },
+                    onEachFeature: bindFilteredPopup
+                })
+            },
+            {
+                active: true,
+                short_name: "Flight_2",
+                legend: "",
+                name: getfullName("Flight_2", ''),
+                layer: L.geoJSON(Heli_Flights, {
+                    filter: f => f.properties.id === 2,
+                    style: {
+                        color: 'black',
+                        weight: 1.5,
+                        fillColor: '#00cc00',
+                        fillOpacity: 0.4
+                    },
+                    onEachFeature: bindFilteredPopup
+                })
+            },
+            {
+                active: true,
+                short_name: "Flight_3",
+                legend: "",
+                name: getfullName("Flight_3", ''),
+                layer: L.geoJSON(Heli_Flights, {
+                    filter: f => f.properties.id === 3,
+                    style: {
+                        color: 'black',
+                        weight: 1.5,
+                        fillColor: '#0066ff',
+                        fillOpacity: 0.4
+                    },
+                    onEachFeature: bindFilteredPopup
+                })
+            },
+            {
+                active: true,
+                short_name: "Flight_4",
+                legend: "",
+                name: getfullName("Flight_4", ''),
+                layer: L.geoJSON(Heli_Flights, {
+                    filter: f => f.properties.id === 4,
+                    style: {
+                        color: 'black',
+                        weight: 1.5,
+                        fillColor: '#ff9900',
+                        fillOpacity: 0.4
+                    },
+                    onEachFeature: bindFilteredPopup
+                })
+            }
+        ]
+    }
+    ,
 
     {
+        group: "SAEM Drone_flights",
+        collapsed: true,
+        layers: [
+            {
+                active: false,
+                short_name: "Flight 1",
+                legend: "",
+                name: getfullName("Flight_1", ''),
+                layer: L.geoJSON(Drone_Flights, {
+                    filter: f => f.properties.id === 1,
+                    style: {
+                        color: 'black',
+                        weight: 1.5,
+                        fillColor: '#ff0000',
+                        fillOpacity: 0.4
+                    },
+                    onEachFeature: bindFilteredPopup
+                })
+            },
+            {
+                active: false,
+                short_name: "Flight_2",
+                legend: "",
+                name: getfullName("Flight_2", ''),
+                layer: L.geoJSON(Drone_Flights, {
+                    filter: f => f.properties.id === 2,
+                    style: {
+                        color: 'black',
+                        weight: 1.5,
+                        fillColor: '#00cc00',
+                        fillOpacity: 0.4
+                    },
+                    onEachFeature: bindFilteredPopup
+                })
+            },
+            {
+                active: false,
+                short_name: "Flight_3",
+                legend: "",
+                name: getfullName("Flight_3", ''),
+                layer: L.geoJSON(Drone_Flights, {
+                    filter: f => f.properties.id === 3,
+                    style: {
+                        color: 'black',
+                        weight: 1.5,
+                        fillColor: '#0066ff',
+                        fillOpacity: 0.4
+                    },
+                    onEachFeature: bindFilteredPopup
+                })
+            },
+            {
+                active: false,
+                short_name: "Flight_4",
+                legend: "",
+                name: getfullName("Flight_4", ''),
+                layer: L.geoJSON(Drone_Flights, {
+                    filter: f => f.properties.id === 4,
+                    style: {
+                        color: 'black',
+                        weight: 1.5,
+                        fillColor: '#ff9900',
+                        fillOpacity: 0.4
+                    },
+                    onEachFeature: bindFilteredPopup
+                })
+            },
+            {
+                active: false,
+                short_name: "Flight_5",
+                legend: "",
+                name: getfullName("Flight_5", ''),
+                layer: L.geoJSON(Drone_Flights, {
+                    filter: f => f.properties.id === 5,
+                    style: {
+                        color: 'black',
+                        weight: 1.5,
+                        fillColor: '#4ED1A3',
+                        fillOpacity: 0.4
+                    },
+                    onEachFeature: bindFilteredPopup
+                })
+            }
+        ]
+    }
+    ,
+
+    {
+        group: 'Seismic',
+        collapsed: true,
+        layers: [
+            {
+                active: false,
+                short_name: "DOW_Seismic",
+                legend: "",
+                name: getfullName("DOW_Seismic", ''),
+                layer: L.geoJSON(Dow_Seismic, {
+                    style: {
+                        color: '#000000',  // stroke color (black or any)
+                        weight: 2,
+                        opacity: 1,
+                        fill: false,        // disable fill
+                        fillOpacity: 0      // just in case
+                    }
+                    // onEachFeature: bindFilteredPopup, // optional
+                }),
+
+            }, {
+                active: false,
+                short_name: "LIAG_Seismic_2D",
+                legend: "",
+                name: getfullName("LIAG_Seismic_2D", ''),
+                layer: L.geoJSON(LIAG_Seismic_2D, {
+                    style: {
+                        color: 'black',
+                        weight: 2,
+                        opacity: 1,
+                        fill: false,
+                        fillOpacity: 0
+                    },
+                    onEachFeature: bindFilteredPopup
+                }),
+            },
+            {
+                active: false,
+                short_name: "LIAG_Seismic_3D",
+                legend: "",
+                name: getfullName("LIAG_Seismic_3D", ''),
+                layer: L.geoJSON(LIAG_Seismic_3D, {
+                    style: {
+                        color: 'black',
+                        weight: 2,
+                        opacity: 1,
+                        fill: false,
+                        fillOpacity: 0
+                    },
+                    onEachFeature: bindFilteredPopup
+                }),
+            },
+
+        ]
+    },
+    {
+        group: "Infrastructure",
+        collapsed: true,
+        layers: [
+            {
+                active: false,
+                short_name: "Powerline_380kV",
+                legend: "",
+                name: getfullName("Powerline_380kv", ''),
+                layer: L.geoJSON(Powerline_380kv, {
+                    onEachFeature: bindFilteredPopup,
+                    color: 'red',
+                    weight: 2,
+                }),
+            },
+            {
+                active: false,
+                short_name: "Powerline_110kV",
+                legend: "",
+                name: getfullName("Powerline_110kv", ''),
+                layer: L.geoJSON(Powerline_110kv, {
+                    onEachFeature: bindFilteredPopup,
+                    color: 'blue',
+                    weight: 1,
+                }),
+            },
+            {
+                active: false,
+                short_name: "RailwayLines",
+                legend: "",
+                name: getfullName("RailwayLines", ''),
+                layer: L.geoJSON(RailwayLines, {
+                    onEachFeature: bindFilteredPopup,
+                    color: '#408080',
+                    weight: 4,                  // slightly thicker for visibility
+
+                }),
+            },
+            {
+                active: false,
+                short_name: "pipeline_gas",
+                legend: "",
+                name: getfullName("pipeline_gas", ''),
+                layer: L.geoJSON(pipeline_gas, {
+                    onEachFeature: bindFilteredPopup,
+                    style: {
+                        color: '#ff8040',
+                        weight: 3,
+                        dashArray: '6,4',
+                        opacity: 0.9
+                    }
+                }),
+            },
+            {
+                active: false,
+                short_name: "pipeline_chemicals",
+                legend: "",
+                name: getfullName("pipeline_chemicals", ''),
+                layer: L.geoJSON(pipeline_chemicals, {
+                    onEachFeature: bindFilteredPopup,
+                    style: {
+                        color: '#9900cc', // purple-ish
+                        weight: 3,
+                        dashArray: '6,4',
+                        opacity: 0.9
+                    }
+                }),
+            },
+            {
+                active: false,
+                short_name: "pipeline_oil",
+                legend: "",
+                name: getfullName("pipeline_oil", ''),
+                layer: L.geoJSON(pipeline_oil, {
+                    onEachFeature: bindFilteredPopup,
+                    style: {
+                        color: '#cc0000', // red-ish
+                        weight: 3,
+                        dashArray: '6,4',
+                        opacity: 0.9
+                    }
+                }),
+            }
+            ,
+            {
+                active: true,
+                short_name: "wind_turbines",
+                legend: "",
+                name: getfullName("wind_turbines", ''),
+                layer: L.geoJSON(wind_turbines, {
+                    pointToLayer: function (feature, latlng) {
+                        return L.marker(latlng, { icon: windTurbineIcon });
+                    },
+                    onEachFeature: bindFilteredPopup
+                }),
+            }
+
+        ]
+    },
+    {
         group: 'Geology',
-        collapsed: false,
+        collapsed: true,
         layers: [{
             short_name: "Geology",
             legend: '',
@@ -218,107 +600,62 @@ var overLayers = [
             name: getfullName("Geology", ''),
             layer: {
                 type: "tileLayer.wms",
-                args: ["https://services.bgr.de/wms/geologie/guek200/?", {
-                    layers: 1,
+                args: ["https://nibis.lbeg.de/cardomap3/public/ogc.ashx?NodeId=64&Service=WFS&Request=GetCapabilities&", {
+                    layers: 'L23',
                     format: 'image/png',
                     transparent: true,
                     zIndex: 1,
-
-                    // srs: 3857
                 }],
             }
-            // layer: L.tileLayer.wms("https://services.lgrb-bw.de/index.phtml?format=image/png&layers=lgrb_gu500_ov")
-        },
-        ]
+        }]
     },
     {
         group: 'Protected areas',
         collapsed: true,
-        layers: [{
-            active: false,
-            // name: '  <details><summary><div id="Naturschutzgebiete"></div>Naturschutzgebiete</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button",title ="zoom to layer", onclick=ZoomToLayer("Naturschutzgebiete")> <img src="./src/assets/magnifying-glass-location-solid.svg" , title ="zoom to layer"  /img></button> </details>  ',
-            short_name: "Naturschutzgebiete",
-            legend: "",
-            name: getfullName("Naturschutzgebiete", ''),
-            layer: L.geoJSON(Naturschutzgebiete, {
-                onEachFeature: function (f, l) {
-                    l.bindPopup('<pre>' + JSON.stringify(f.properties, null, ' ').replace(/[\{\}"]/g, '') + '</pre>');
-                }, color: 'red', weight: 1, fillOpacity: 0.4, weight: 0.7
-            },),
-        },
-        {
-            active: false,
-            // name: '  <details><summary><div id="Landschaftsschutzgebiet"></div>Landschaftsschutzgebiet</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button" ,  onclick=ZoomToLayer("Landschaftsschutzgebiet")> <img src="./src/assets/magnifying-glass-location-solid.svg", title ="zoom to layer" /img></button> </details>  ',
-            short_name: "Landschaftsschutzgebiet",
-            legend: "",
-            name: getfullName("Landschaftsschutzgebiet", ''),
-            layer: L.geoJSON(Landschaftsschutzgebiet, {
-                onEachFeature: function (f, l) {
-                    l.bindPopup('<pre>' + JSON.stringify(f.properties, null, ' ').replace(/[\{\}"]/g, '') + '</pre>');
-                }, weight: 0.7, color: '#408080', opacity: 1, fillOpacity: 0.4,
-            },),
-        },
-        {
-            active: false,
-            // name: '  <details><summary><div id="Biosphaerengebiet"></div>Biosphaerengebiet</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button" ,  onclick=ZoomToLayer("Biosphaerengebiet")> <img src="./src/assets/magnifying-glass-location-solid.svg", title ="zoom to layer" /img></button> </details>  ',
-            short_name: "Biosphaerengebiet",
-            legend: "",
-            name: getfullName("Biosphaerengebiet", ''),
-            layer: L.geoJSON(Biosphaerengebiet, {
-                onEachFeature: function (f, l) {
-                    l.bindPopup('<pre>' + JSON.stringify(f.properties, null, ' ').replace(/[\{\}"]/g, '') + '</pre>');
-                }, weight: .4, color: 'blue', opacity: 1, fillOpacity: 0.4,
-            },),
-        },
-        {
-            active: false,
-            // name: '  <details><summary><div id="FFH_Gebiet"></div>FFH-Gebiet</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button" ,  onclick=ZoomToLayer("FFH-Gebiet")> <img src="./src/assets/magnifying-glass-location-solid.svg", title ="zoom to layer" /img></button> </details>  ',
-            short_name: "FFH-Gebiet",
-            legend: "",
-            name: getfullName("FFH-Gebiet", ''),
-            layer: L.geoJSON(FFH_Gebiet, {
-                onEachFeature: function (f, l) {
-                    l.bindPopup('<pre>' + JSON.stringify(f.properties, null, ' ').replace(/[\{\}"]/g, '') + '</pre>');
-                }, weight: .7, color: '#ff8040', opacity: 1, fillOpacity: 0.4,
-            },),
-        },
-        {
-            active: false,
-            // name: '  <details><summary><div id="Vogelschutzgebiet"></div>Vogelschutzgebiet</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button" ,  onclick=ZoomToLayer("Vogelschutzgebiet")> <img src="./src/assets/magnifying-glass-location-solid.svg", title ="zoom to layer" /img></button> </details>  ',
-            short_name: "Vogelschutzgebiet",
-            legend: "",
-            name: getfullName("Vogelschutzgebiet", ''),
-            layer: L.geoJSON(Vogelschutzgebiet, {
-                onEachFeature: function (f, l) {
-                    l.bindPopup('<pre>' + JSON.stringify(f.properties, null, ' ').replace(/[\{\}"]/g, '') + '</pre>');
-                }, weight: .7, color: '#8000ff', opacity: 1,
-            },),
-        },
-        {
-            active: true,
-            // name: '  <details><summary><div id="Naturepark"></div>Naturepark</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button" ,  onclick=ZoomToLayer("Naturepark")> <img src="./src/assets/magnifying-glass-location-solid.svg", title ="zoom to layer" /img></button> </details>  ',
-            short_name: "Naturepark",
-            legend: "",
-            name: getfullName("Naturepark", ''),
-            layer: L.geoJSON(Naturepark, {
-                onEachFeature: function (f, l) {
-                    l.bindPopup('<pre>' + JSON.stringify(f.properties, null, ' ').replace(/[\{\}"]/g, '') + '</pre>');
-                }, weight: .7, color: '#808000', opacity: 1, fillOpacity: 0.4,
-            },),
-        },
-
-        {
-            active: false,
-            // name: '  <details><summary><div id="Wasserschutzgebiete"></div>Wasserschutzgebiete</summary>   <img src="legend/Noisetestlocationscopy_11.png" /img> <button class="Zoombtn", type="button" ,  onclick=ZoomToLayer("Wasserschutzgebiete")> <img src="./src/assets/magnifying-glass-location-solid.svg", title ="zoom to layer" /img></button> </details>  ',
-            short_name: "Wasserschutzgebiete",
-            legend: "",
-            name: getfullName("Wasserschutzgebiete", ''),
-            layer: L.geoJSON(Wasserschutzgebiete, {
-                onEachFeature: function (f, l) {
-                    l.bindPopup('<pre>' + JSON.stringify(f.properties, null, ' ').replace(/[\{\}"]/g, '') + '</pre>');
-                }, weight: .7, color: '#ed29a4', opacity: 1, fillOpacity: 0.4,
-            },),
-        },
+        layers: [
+            {
+                active: false,
+                short_name: "Naturschutzgebiete",
+                legend: "",
+                name: getfullName("Naturschutzgebiete", ''),
+                layer: L.geoJSON(Naturschutzgebiete, {
+                    onEachFeature: bindFilteredPopup,
+                    color: 'red',
+                    weight: 0.7,
+                    fillOpacity: 0.4
+                }),
+            },
+            {
+                active: false,
+                short_name: "Landschaftsschutzgebiete",
+                legend: "",
+                name: getfullName("Landschaftsschutzgebiete", ''),
+                layer: L.geoJSON(Landschaftsschutzgebiete, {
+                    onEachFeature: bindFilteredPopup,
+                    color: '#408080',
+                    weight: 0.7,
+                    opacity: 1,
+                    fillOpacity: 0.4
+                }),
+            },
+            {
+                active: false,
+                short_name: "Naturdenkmale",
+                legend: "",
+                name: getfullName("Naturdenkmale", '', 'Source:OSM'),
+                layer: L.geoJSON(Naturdenkmale, {
+                    pointToLayer: function (feature, latlng) {
+                        return L.circleMarker(latlng, {
+                            radius: 6,
+                            color: "#000",
+                            fillColor: "#00cc00",
+                            fillOpacity: 0.7,
+                            weight: 1
+                        });
+                    },
+                    onEachFeature: bindFilteredPopup
+                }),
+            }
         ]
     }
 ];
@@ -342,8 +679,6 @@ var panelLayers = new L.Control.PanelLayers(null, overLayers, {
     // collapsed: true
     // title: "Layers",
     position: 'topright',
-    compact: true
-
 }).addTo(map);
 
 
@@ -351,68 +686,91 @@ var panelLayers = new L.Control.PanelLayers(null, overLayers, {
 
 
 
+function bindFilteredPopup(feature, layer) {
+    if (feature.properties) {
+        let filteredProps = Object.entries(feature.properties)
+            .filter(([_, value]) => value !== null && value !== undefined && value !== '')
+            .map(([key, value]) => `<strong>${key}</strong>: ${value}`)
+            .join("<br>");
 
-swipeMenuInnerHTML = '<select class="form-select" multiple  size="5"  aria-label="form-select" id="LeftLayerSelector"></select><div><button type="button" class="btn btn-success" id="confirm">Add swipe</button>   <button type="button" class="btn btn-secondary" id="closeSide">Remove all</button></div>'
+        if (filteredProps) {
+            layer.bindPopup(filteredProps);
+        }
+    }
+}
+
+document.querySelectorAll('.leaflet-panel-layers-item label').forEach(label => {
+    label.addEventListener('click', function (e) {
+        const checkbox = this.querySelector('input[type="checkbox"]');
+
+        // Prevent double toggle if clicking the checkbox directly
+        if (checkbox && e.target !== checkbox) {
+            checkbox.click(); // use .click() instead of changing checked state
+        }
+    });
+});
+
+// swipeMenuInnerHTML = '<select class="form-select" multiple  size="5"  aria-label="form-select" id="LeftLayerSelector"></select><div><button type="button" class="btn btn-success" id="confirm">Add swipe</button>   <button type="button" class="btn btn-secondary" id="closeSide">Remove all</button></div>'
 
 
 // L.control.slideMenu(swipeMenuInnerHTML, { position: bottomright, menuposition: bottomright }).addTo(map);
 
 // L.control.slideMenu(swipeMenuInnerHTML, { position: bottomright }).addTo(map);
 
-var slideMenu = L.control.slideMenu("", {
+// // var slideMenu = L.control.slideMenu("", {
 
-    width: "25%",
-    height: "100%",
-    delay: 10,
-    icon: "fa fa-solid fa-bars",
-})
-    .addTo(map);
+// //     width: "25%",
+// //     height: "100%",
+// //     delay: 10,
+// //     icon: "fa fa-solid fa-bars",
+// // })
+// //     .addTo(map);
 
-slideMenu.setContents(swipeMenuInnerHTML);
+// // slideMenu.setContents(swipeMenuInnerHTML);
 
-document.getElementById("confirm").addEventListener("click", addSideBySide);
-document.getElementById("closeSide").addEventListener("click", removeSideBySide);
-// document.getElementById("ZoomTo").addEventListener("click", ZoomToLayer);
+// // document.getElementById("confirm").addEventListener("click", addSideBySide);
+// // document.getElementById("closeSide").addEventListener("click", removeSideBySide);
+// // document.getElementById("ZoomTo").addEventListener("click", ZoomToLayer);
 
-var isSideBySideOn = null
+// var isSideBySideOn = null
 
-function addSideBySide() {
-    if (isSideBySideOn == null) {
-        isSideBySideOn = L.control.sideBySide([], [], { thumbSize: 25, padding: 70 }).addTo(map);
-        isSideBySideOn.setLeftLayers(overLayers[2].layers[0].layer)
-        // isSideBySideOn.setLeftLayers(overLayers[2].layers[0].layer)
-        // isSideBySideOn.setRightLayers(osmLayer)
+// function addSideBySide() {
+//     if (isSideBySideOn == null) {
+//         isSideBySideOn = L.control.sideBySide([], [], { thumbSize: 25, padding: 70 }).addTo(map);
+//         isSideBySideOn.setLeftLayers(overLayers[2].layers[0].layer)
+//         // isSideBySideOn.setLeftLayers(overLayers[2].layers[0].layer)
+//         // isSideBySideOn.setRightLayers(osmLayer)
 
-    }
-}
+//     }
+// }
 
-function removeSideBySide() {
-    if (isSideBySideOn) {
-        isSideBySideOn.remove()
-        isSideBySideOn = null
-    }
-}
+// function removeSideBySide() {
+//     if (isSideBySideOn) {
+//         isSideBySideOn.remove()
+//         isSideBySideOn = null
+//     }
+// }
 
 
-function ZoomToLayer(name) {
+// function ZoomToLayer(name) {
 
-    console.log(name)
-    for (let i = 0; i < overLayers.length; i++) {
-        for (let L = 0; L < overLayers[i].layers.length; L++) {
-            if (overLayers[i].layers[L].short_name == name) {
-                overLayers[i].layers[L].layer.addTo(map);                   // make sure layer is active
-                map.fitBounds(overLayers[i].layers[L].layer.getBounds()) // zoom to layer
-                break
-            }
-        }
-    }
-}
+//     console.log(name)
+//     for (let i = 0; i < overLayers.length; i++) {
+//         for (let L = 0; L < overLayers[i].layers.length; L++) {
+//             if (overLayers[i].layers[L].short_name == name) {
+//                 overLayers[i].layers[L].layer.addTo(map);                   // make sure layer is active
+//                 map.fitBounds(overLayers[i].layers[L].layer.getBounds()) // zoom to layer
+//                 break
+//             }
+//         }
+//     }
+// }
 
-var layersList = []
-updateLayersList()
+// var layersList = []
+// updateLayersList()
 
-swipeButton = document.getElementById('swipeMenu');
-swipeButton.onclick = updateLayersListInSwipePanel()
+// swipeButton = document.getElementById('swipeMenu');
+// swipeButton.onclick = updateLayersListInSwipePanel()
 
 
 var browserControl = L.control.browserPrint({ position: 'topleft', title: 'Print Map' }).addTo(map);
@@ -420,26 +778,26 @@ var browserControl = L.control.browserPrint({ position: 'topleft', title: 'Print
 
 
 
-function updateLayersList() {
+// function updateLayersList() {
 
-    for (let i = 0; i < overLayers.length; i++) {
-        for (let L = 0; L < overLayers[i].layers.length; L++) {
-            layersList.push(overLayers[i].layers[L].short_name)
-        }
-    }
-    console.log('Updated')
-}
+//     for (let i = 0; i < overLayers.length; i++) {
+//         for (let L = 0; L < overLayers[i].layers.length; L++) {
+//             layersList.push(overLayers[i].layers[L].short_name)
+//         }
+//     }
+//     console.log('Updated')
+// }
 
-function updateLayersListInSwipePanel() {
-    let leftPanel = document.getElementById("LeftLayerSelector");
-    for (let i = 0; i < layersList.length; i++) {
-        let option = document.createElement('option');
-        option.text = layersList[i];
-        leftPanel.appendChild(option)
+// function updateLayersListInSwipePanel() {
+//     let leftPanel = document.getElementById("LeftLayerSelector");
+//     for (let i = 0; i < layersList.length; i++) {
+//         let option = document.createElement('option');
+//         option.text = layersList[i];
+//         leftPanel.appendChild(option)
 
-    }
+//     }
 
-}
+// }
 
 
 
@@ -453,24 +811,24 @@ function getfullName(short_name, legend, attribution) {
     summary.innerHTML += short_name;
 
 
-    let infoIcon = L.DomUtil.create("img", "layer-info-img", details);
-    infoIcon.alt = "\u{1F6C8}";
-    infoIcon.title = "Attribution";
-    // infoIcon.setAttribute("data-target", "#exampleModalCenter")
-    // infoIcon.setAttribute('onclick', "alert('" + short_name + "')");
-    infoIcon.setAttribute('onclick', "ShowAttribution('" + short_name + "," + attribution + "')");
+    // let infoIcon = L.DomUtil.create("img", "layer-info-img", details);
+    // infoIcon.alt = "\u{1F6C8}";
+    // infoIcon.title = "Attribution";
+    // // infoIcon.setAttribute("data-target", "#exampleModalCenter")
+    // // infoIcon.setAttribute('onclick', "alert('" + short_name + "')");
+    // infoIcon.setAttribute('onclick', "ShowAttribution('" + short_name + "," + attribution + "')");
 
 
-    let legendHolder = L.DomUtil.create("img", "", details);
-    legendHolder.setAttribute('src', legend);
+    // let legendHolder = L.DomUtil.create("img", "", details);
+    // legendHolder.setAttribute('src', legend);
 
-    let ZoomToBtn = L.DomUtil.create("button", "Zoombtn", details);
-    ZoomToBtn.setAttribute('type', "button");
-    let ZoomToBtnIcon = L.DomUtil.create("img", "", ZoomToBtn);
-    ZoomToBtnIcon.setAttribute('src', "./src/assets/magnifying-glass-location-solid.svg");
-    ZoomToBtnIcon.setAttribute('title', "zoom to layer");
-    // ZoomToBtn.innerText += 'onclick=ZoomToLayer("Geology")'
-    ZoomToBtn.setAttribute('onclick', "ZoomToLayer('" + short_name + "')");
+    // let ZoomToBtn = L.DomUtil.create("button", "Zoombtn", details);
+    // ZoomToBtn.setAttribute('type', "button");
+    // let ZoomToBtnIcon = L.DomUtil.create("img", "", ZoomToBtn);
+    // ZoomToBtnIcon.setAttribute('src', "./src/assets/magnifying-glass-location-solid.svg");
+    // ZoomToBtnIcon.setAttribute('title', "zoom to layer");
+    // // ZoomToBtn.innerText += 'onclick=ZoomToLayer("Geology")'
+    // ZoomToBtn.setAttribute('onclick', "ZoomToLayer('" + short_name + "')");
 
     return container.innerHTML
 }
