@@ -610,6 +610,26 @@ var overLayers = [
         }]
     },
     {
+        group: 'Boreholes',
+        collapsed: true,
+        layers: [{
+            short_name: "Boreholes",
+            legend: '',
+            active: false,
+            name: getfullName("Boreholes", 'https://nibis.lbeg.de/cardomap3/public/ogc.ashx?NODEID=145&Service=WMS&cardo3SessionGuid=C3_4e8c5ccb-8b48-4ed5-9466-791472ac7a8f&Request=GetLegendGraphic&Version=1.3.0&Layer=L104:1&'),
+            layer: {
+                type: "tileLayer.wms",
+                args: ["https://nibis.lbeg.de/cardomap3/public/ogc.ashx?NodeId=145&Service=WMS&Request=GetCapabilities&", {
+                    layers: 'L104:1',
+                    format: 'image/png',
+                    transparent: true,
+                    attribution: "© LBEG",
+                    zIndex: 1,
+                }],
+            }
+        }]
+    },
+    {
         group: 'Protected areas',
         collapsed: true,
         layers: [
@@ -806,9 +826,22 @@ function getfullName(short_name, legend, attribution) {
     let container = L.DomUtil.create('div');
     let details = L.DomUtil.create('details', '', container);
     let summary = L.DomUtil.create('summary', '', details);
+
+    // Summary styling
     let div = L.DomUtil.create('div', '', summary);
     div.setAttribute('id', short_name);
     summary.innerHTML += short_name;
+
+    // Legend Image (if available)
+    if (legend) {
+        summary.innerHTML += ` ${short_name} &#x25B6;`; // ▶ black right-pointing triangle
+
+        let legendHolder = L.DomUtil.create("img", "", details);
+        legendHolder.setAttribute('src', legend);
+        legendHolder.setAttribute('alt', 'Legend');
+        legendHolder.setAttribute('style', 'margin-top: 4px; max-height: 500px; display: block;');
+    }
+
 
 
     // let infoIcon = L.DomUtil.create("img", "layer-info-img", details);
