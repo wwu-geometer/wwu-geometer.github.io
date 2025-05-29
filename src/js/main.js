@@ -1,6 +1,6 @@
 
 var map = L.map('map', {
-    zoom: 10,
+    zoom: 13,
     center: L.latLng([53.4521, 9.4807]),
     attributionControl: true,
     fullscreenControl: true,
