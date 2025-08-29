@@ -35,7 +35,7 @@ map.addControl(new L.Control.LinearMeasurement({
 }));
 
 var hash = new L.Hash(map);
-
+L.control.locate().addTo(map);
 var notification = L.control
     .notifications({
         className: 'pastel',
@@ -696,7 +696,7 @@ var panelLayers = new L.Control.PanelLayers(null, overLayers, {
     collapsibleGroups: true,
     compact: true,
     // title: 'All layers',
-    // collapsed: true
+    //collapsed: true,
     // title: "Layers",
     position: 'topright',
 }).addTo(map);
