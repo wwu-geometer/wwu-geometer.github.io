@@ -230,7 +230,7 @@ var overLayers = [
                     filter: f => f.properties.id === 2,
                     style: {
                         className: 'heli-shadow',
-                        color: '#00cc00',
+                        color: '#ff0000',
                         weight: 4,
                         opacity: 1
                     },
@@ -248,7 +248,7 @@ var overLayers = [
                     filter: f => f.properties.id === 3,
                     style: {
                         className: 'heli-shadow',
-                        color: '#0066ff',
+                        color: '#ff9900',
                         weight: 4,
                         opacity: 1
                     },
@@ -266,7 +266,7 @@ var overLayers = [
                     filter: f => f.properties.id === 4,
                     style: {
                         className: 'heli-shadow',
-                        color: '#ff9900',
+                        color: '#0066ff',
                         weight: 4,
                         opacity: 1
                     },
@@ -328,22 +328,7 @@ var overLayers = [
                     onEachFeature: bindFilteredPopup
                 })
             },
-            {
-                active: true,
-                short_name: "Flight_4",
-                legend: "",
-                name: getfullName("Flight_4", ''),
-                layer: L.geoJSON(Heli_Flights, {
-                    filter: f => f.properties.id === 4,
-                    style: {
-                        color: 'black',
-                        weight: 1.5,
-                        fillColor: '#ff9900',
-                        fillOpacity: 0.4
-                    },
-                    onEachFeature: bindFilteredPopup
-                })
-            }
+
         ]
     }
     ,
