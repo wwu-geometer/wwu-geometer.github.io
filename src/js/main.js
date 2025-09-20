@@ -291,7 +291,7 @@ var overLayers = [
                         color: 'black',
                         weight: 1.5,
                         fillColor: '#ff0000',
-                        fillOpacity: 0.4
+                        fillOpacity: 0.2
                     },
                     onEachFeature: bindFilteredPopup
                 })
@@ -307,7 +307,7 @@ var overLayers = [
                         color: 'black',
                         weight: 1.5,
                         fillColor: '#00cc00',
-                        fillOpacity: 0.4
+                        fillOpacity: 0.2
                     },
                     onEachFeature: bindFilteredPopup
                 })
@@ -323,7 +323,7 @@ var overLayers = [
                         color: 'black',
                         weight: 1.5,
                         fillColor: '#0066ff',
-                        fillOpacity: 0.4
+                        fillOpacity: 0.2
                     },
                     onEachFeature: bindFilteredPopup
                 })
