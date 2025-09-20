@@ -230,7 +230,7 @@ var overLayers = [
                     filter: f => f.properties.id === 2,
                     style: {
                         className: 'heli-shadow',
-                        color: '#ff0000',
+                        color: '#00cc00',
                         weight: 4,
                         opacity: 1
                     },
@@ -248,7 +248,7 @@ var overLayers = [
                     filter: f => f.properties.id === 3,
                     style: {
                         className: 'heli-shadow',
-                        color: '#ff9900',
+                        color: '#0066ff',
                         weight: 4,
                         opacity: 1
                     },
@@ -266,7 +266,7 @@ var overLayers = [
                     filter: f => f.properties.id === 4,
                     style: {
                         className: 'heli-shadow',
-                        color: '#0066ff',
+                        color: '#ff9900',
                         weight: 4,
                         opacity: 1
                     },
