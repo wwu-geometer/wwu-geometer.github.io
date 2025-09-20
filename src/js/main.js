@@ -333,92 +333,93 @@ var overLayers = [
     }
     ,
 
-    {
-        group: "SAEM Drone_flights",
-        collapsed: true,
-        layers: [
-            {
-                active: false,
-                short_name: "Flight 1",
-                legend: "",
-                name: getfullName("Flight_1", ''),
-                layer: L.geoJSON(Drone_Flights, {
-                    filter: f => f.properties.id === 1,
-                    style: {
-                        color: 'black',
-                        weight: 1.5,
-                        fillColor: '#ff0000',
-                        fillOpacity: 0.4
-                    },
-                    onEachFeature: bindFilteredPopup
-                })
-            },
-            {
-                active: false,
-                short_name: "Flight_2",
-                legend: "",
-                name: getfullName("Flight_2", ''),
-                layer: L.geoJSON(Drone_Flights, {
-                    filter: f => f.properties.id === 2,
-                    style: {
-                        color: 'black',
-                        weight: 1.5,
-                        fillColor: '#00cc00',
-                        fillOpacity: 0.4
-                    },
-                    onEachFeature: bindFilteredPopup
-                })
-            },
-            {
-                active: false,
-                short_name: "Flight_3",
-                legend: "",
-                name: getfullName("Flight_3", ''),
-                layer: L.geoJSON(Drone_Flights, {
-                    filter: f => f.properties.id === 3,
-                    style: {
-                        color: 'black',
-                        weight: 1.5,
-                        fillColor: '#0066ff',
-                        fillOpacity: 0.4
-                    },
-                    onEachFeature: bindFilteredPopup
-                })
-            },
-            {
-                active: false,
-                short_name: "Flight_4",
-                legend: "",
-                name: getfullName("Flight_4", ''),
-                layer: L.geoJSON(Drone_Flights, {
-                    filter: f => f.properties.id === 4,
-                    style: {
-                        color: 'black',
-                        weight: 1.5,
-                        fillColor: '#ff9900',
-                        fillOpacity: 0.4
-                    },
-                    onEachFeature: bindFilteredPopup
-                })
-            },
-            {
-                active: false,
-                short_name: "Flight_5",
-                legend: "",
-                name: getfullName("Flight_5", ''),
-                layer: L.geoJSON(Drone_Flights, {
-                    filter: f => f.properties.id === 5,
-                    style: {
-                        color: 'black',
-                        weight: 1.5,
-                        fillColor: '#4ED1A3',
-                        fillOpacity: 0.4
-                    },
-                    onEachFeature: bindFilteredPopup
-                })
-            }
-        ]
-    }
+    // {
+    //     group: "SAEM Drone_flights",
+    //     collapsed: true,
+    //     layers: [
+    //         {
+    //             active: false,
+    //             short_name: "Flight 1",
+    //             legend: "",
+    //             name: getfullName("Flight_1", ''),
+    //             layer: L.geoJSON(Drone_Flights, {
+    //                 filter: f => f.properties.id === 1,
+    //                 style: {
+    //                     color: 'black',
+    //                     weight: 1.5,
+    //                     fillColor: '#ff0000',
+    //                     fillOpacity: 0.4
+    //                 },
+    //                 onEachFeature: bindFilteredPopup
+    //             })
+    //         },
+    //         {
+    //             active: false,
+    //             short_name: "Flight_2",
+    //             legend: "",
+    //             name: getfullName("Flight_2", ''),
+    //             layer: L.geoJSON(Drone_Flights, {
+    //                 filter: f => f.properties.id === 2,
+    //                 style: {
+    //                     color: 'black',
+    //                     weight: 1.5,
+    //                     fillColor: '#00cc00',
+    //                     fillOpacity: 0.4
+    //                 },
+    //                 onEachFeature: bindFilteredPopup
+    //             })
+    //         },
+    //         {
+    //             active: false,
+    //             short_name: "Flight_3",
+    //             legend: "",
+    //             name: getfullName("Flight_3", ''),
+    //             layer: L.geoJSON(Drone_Flights, {
+    //                 filter: f => f.properties.id === 3,
+    //                 style: {
+    //                     color: 'black',
+    //                     weight: 1.5,
+    //                     fillColor: '#0066ff',
+    //                     fillOpacity: 0.4
+    //                 },
+    //                 onEachFeature: bindFilteredPopup
+    //             })
+    //         },
+    //         {
+    //             active: false,
+    //             short_name: "Flight_4",
+    //             legend: "",
+    //             name: getfullName("Flight_4", ''),
+    //             layer: L.geoJSON(Drone_Flights, {
+    //                 filter: f => f.properties.id === 4,
+    //                 style: {
+    //                     color: 'black',
+    //                     weight: 1.5,
+    //                     fillColor: '#ff9900',
+    //                     fillOpacity: 0.4
+    //                 },
+    //                 onEachFeature: bindFilteredPopup
+    //             })
+    //         },
+    //         {
+    //             active: false,
+    //             short_name: "Flight_5",
+    //             legend: "",
+    //             name: getfullName("Flight_5", ''),
+    //             layer: L.geoJSON(Drone_Flights, {
+    //                 filter: f => f.properties.id === 5,
+    //                 style: {
+    //                     color: 'black',
+    //                     weight: 1.5,
+    //                     fillColor: '#4ED1A3',
+    //                     fillOpacity: 0.4
+    //                 },
+    //                 onEachFeature: bindFilteredPopup
+    //             })
+    //         }
+    //     ]
+    // }
+
     ,
 
     {
