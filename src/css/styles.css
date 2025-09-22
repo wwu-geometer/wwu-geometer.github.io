@@ -468,3 +468,44 @@ summary #Transmitter\ 4::before {
 .heli-shadow {
   filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.5));
 }
+
+/* Layout */
+summary #FTMG_100m {
+  content: "";
+  display: inline-block;
+  width: 30px;
+  height: 2px;
+  background-color: #000000;
+  margin-right: 4px;
+  opacity: 0.8;
+}
+/* Layout */
+summary #sAEM_Area1 {
+  content: "";
+  display: inline-block;
+  width: 30px;
+  height: 2px;
+  background-color: #ff0000;
+  margin-right: 4px;
+  opacity: 0.8;
+}
+/* Layout */
+summary #sAEM_Area2 {
+  content: "";
+  display: inline-block;
+  width: 30px;
+  height: 2px;
+  background-color: #00cc00;
+  margin-right: 4px;
+  opacity: 0.8;
+}
+/* Layout */
+summary #sAEM_Area3 {
+  content: "";
+  display: inline-block;
+  width: 30px;
+  height: 2px;
+  background-color: #0066ff;
+  margin-right: 4px;
+  opacity: 0.8;
+}

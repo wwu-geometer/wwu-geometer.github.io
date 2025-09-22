@@ -333,6 +333,67 @@ var overLayers = [
     }
     ,
 
+    {
+        group: "Flight lines",
+        collapsed: false,
+        layers: [
+            // -- Existing Heli_Flight_1 to Heli_Flight_4 here --
+
+            {
+                active: false,
+                short_name: "FTMG_100m",
+                legend: "",
+                name: getfullName("FTMG_100m", ''),
+                layer: L.geoJSON(FTMG_100m, {
+                    style: {
+                        color: '#000000',
+                        weight: 1,
+                        opacity: 1
+                    },
+                })
+            },
+            {
+                active: true,
+                short_name: "sAEM_Area1",
+                legend: "",
+                name: getfullName("sAEM_Area1", ''),
+                layer: L.geoJSON(sAEM_Area1, {
+                    style: {
+                        color: '#ff0000',
+                        weight: 1,
+                        opacity: 1
+                    },
+                })
+            },
+            {
+                active: true,
+                short_name: "sAEM_Area1",
+                legend: "",
+                name: getfullName("sAEM_Area2", ''),
+                layer: L.geoJSON(sAEM_Area2, {
+                    style: {
+                        color: '#00cc00',
+                        weight: 1,
+                        opacity: 1
+                    },
+                })
+            },
+            {
+                active: true,
+                short_name: "sAEM_Area3",
+                legend: "",
+                name: getfullName("sAEM_Area3", ''),
+                layer: L.geoJSON(sAEM_Area3, {
+                    style: {
+                        color: '#0066ff',
+                        weight: 1,
+                        opacity: 1
+                    },
+                })
+            },
+
+        ]
+    }
     // {
     //     group: "SAEM Drone_flights",
     //     collapsed: true,
